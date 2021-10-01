@@ -4,46 +4,51 @@ import userEvent from "@testing-library/user-event";
 
 import ContactForm from "./ContactForm";
 
+//==========================================================
 test("renders without errors", () => {
-  //arrange
+  //arrange------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act----------------------------------------------------
   const form = screen.getByText(/contact form/i);
-  //assert
-  //?????? - why below line fail - ?????????????????????
-  //console.log(form.textContent());
+  //assert-------------------------------------------------
   expect(form).toBeTruthy();
   expect(form).toBeInTheDocument();
 });
 
+//==========================================================
 test("renders the contact form header", () => {
-  //arrange
+  //arrange-------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act-----------------------------------------------------
   const h1 = screen.getByText(/contact form/i);
-  //assert
+  //assert--------------------------------------------------
   expect(h1).toBeTruthy();
   expect(h1).toBeInTheDocument();
   expect(h1).toBeVisible();
   expect(h1).toHaveTextContent("Contact Form");
 });
 
+//==========================================================
 test("renders ONE error message if user enters less then 5 characters into firstname.", async () => {
-  //arrange
+  //arrange--------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act------------------------------------------------------
   const firstNameInput = screen.getByLabelText(/first name/i);
-  userEvent.type(firstNameInput, "abcd");
-  const firstNameError = screen.getByTestId("error");
-  //assert
-  expect(firstNameError).toBeTruthy();
-  expect(firstNameError).toHaveTextContent(/error/i);
+  userEvent.type(firstNameInput, "abc");
+  console.log("firstNameInput.textContent = ", firstNameInput.value);
 
-  //????????????????????????????????????????????????????????
-  //Make sure to use async / await and the correct screen     method to account for state change.
-  //????????????????????????????????????????????????????????
-});
+  //assert---------------------------------------------------
+  const promise = screen.findByText(/least 5 characters/i);
+  promise.then((firstNameError) => {
+    expect(firstNameError).toBeTruthy();
+    expect(firstNameError).toHaveTextContent(
+      /firstname must have at least 5 characters/i
+    );
+    // console.log("firstNameError.textContent = ", firstNameError.textContent);
+  });
+}); //end test
 
+//==========================================================
 test("renders THREE error messages if user enters no values into any fields.", async () => {
   //???????????????????????
   //   const DEBUG = true;
@@ -53,9 +58,9 @@ test("renders THREE error messages if user enters no values into any fields.", a
   //????????????????????????????????????????????????????????????
   // ???           What is wrong with the promise ??????????????
   //????????????????????????????????????????????????????????????
-  //arrange
+  //arrange--------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act-------------------------------------------------------
   const form = screen.getByText(/contact form/i);
   //grap three inputs
   const firstNameInput = screen.getByLabelText(/first name/i);
@@ -98,12 +103,12 @@ test("renders THREE error messages if user enters no values into any fields.", a
     DEBUG && console.log("emailError = ", emailError.textContent);
   });
 });
-
+//==========================================================
 test("renders ONE error message if user enters a valid first name and last name but no email.", async () => {
   const DEBUG = false;
-  //arrange
+  //arrange-------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act-----------------------------------------------------
   const form = screen.getByText(/contact form/i);
   //grap three inputs
   const firstNameInput = screen.getByLabelText(/first name/i);
@@ -122,7 +127,7 @@ test("renders ONE error message if user enters a valid first name and last name 
   const submitButton = screen.getByRole("button");
   userEvent.click(submitButton);
 
-  //assert
+  //assert----------------------------------------------------
   const Promise3 = screen.findByText(/valid email address/i);
   Promise3.then((emailError) => {
     expect(emailError).toBeInTheDocument();
@@ -130,12 +135,12 @@ test("renders ONE error message if user enters a valid first name and last name 
     DEBUG && console.log("emailError = ", emailError.textContent);
   });
 });
-
+//==========================================================
 test('renders "email must be a valid email address" if an invalid email is entered', async () => {
   const DEBUG = false;
-  //arrange
+  //arrange-------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act------------------------------------------------------
   const form = screen.getByText(/contact form/i);
   //grap the email inputs
   const emailInput = screen.getByLabelText(/email/i);
@@ -144,7 +149,7 @@ test('renders "email must be a valid email address" if an invalid email is enter
   DEBUG && console.log("emailInput.value = ", emailInput.value);
   //   DEBUG && console.log(form);
 
-  //assert
+  //assert----------------------------------------------------
   const Promise3 = screen.findByText(/valid email address/i);
   Promise3.then((emailError) => {
     expect(emailError).toBeInTheDocument();
@@ -152,12 +157,12 @@ test('renders "email must be a valid email address" if an invalid email is enter
     DEBUG && console.log("emailError = ", emailError.textContent);
   });
 });
-
+//==========================================================
 test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {
   const DEBUG = false;
-  //arrange
+  //arrange--------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act-----------------------------------------------------
   const form = screen.getByText(/contact form/i);
   //grap three inputs
   const firstNameInput = screen.getByLabelText(/first name/i);
@@ -172,7 +177,7 @@ test('renders "lastName is a required field" if an last name is not entered and 
   const submitButton = screen.getByRole("button");
   userEvent.click(submitButton);
 
-  //assert
+  //assert---------------------------------------------------
 
   const Promise2 = screen.findByText(/lastname is a required field/i);
   Promise2.then((lastNameError) => {
@@ -181,16 +186,16 @@ test('renders "lastName is a required field" if an last name is not entered and 
     DEBUG && console.log("lastNameError = ", lastNameError.textContent);
   });
 });
-
+//==========================================================
 test("renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.", async () => {
   //???????????????????????
   //   const DEBUG = true;
   const DEBUG = false;
   //????????????????????????
 
-  //arrange
+  //arrange---------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act-------------------------------------------------------
   const form = screen.getByText(/contact form/i);
   //grap three inputs
   const firstNameInput = screen.getByLabelText(/first name/i);
@@ -239,16 +244,16 @@ test("renders all firstName, lastName and email text when submitted. Does NOT re
     DEBUG && console.log("emailDisplay = ", emailDisplay.textContent);
   });
 });
-
+//==========================================================
 test("renders all fields text when all fields are submitted.", async () => {
   //???????????????????????
-  const DEBUG = true;
-  //   const DEBUG = false;
+  //   const DEBUG = true;
+  const DEBUG = false;
   //????????????????????????
 
-  //arrange
+  //arrange-------------------------------------------------
   render(<ContactForm />);
-  //act
+  //act-----------------------------------------------------
   const form = screen.getByText(/contact form/i);
   //grap three inputs
   const firstNameInput = screen.getByLabelText(/first name/i);
@@ -259,6 +264,10 @@ test("renders all fields text when all fields are submitted.", async () => {
   userEvent.type(lastNameInput, "Hanktoy");
   userEvent.type(emailInput, "tomHankd@aol.com");
 
+  //assert----------------------------------------------------
+  //?????????????????????????????????????????????????????????
+  //? What am I suppose to assert in this test? ?????????????
+  //?????????????????????????????????????????????????????????
   DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
   DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
   DEBUG && console.log("emailInput.value = ", emailInput.value);
