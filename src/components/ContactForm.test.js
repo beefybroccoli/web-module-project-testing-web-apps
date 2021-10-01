@@ -46,6 +46,7 @@ test("renders ONE error message if user enters less then 5 characters into first
 
 test("renders THREE error messages if user enters no values into any fields.", async () => {
   //???????????????????????
+  //   const DEBUG = true;
   const DEBUG = false;
   //????????????????????????
 
@@ -60,35 +61,36 @@ test("renders THREE error messages if user enters no values into any fields.", a
   const firstNameInput = screen.getByLabelText(/first name/i);
   const lastNameInput = screen.getByLabelText(/last name/i);
   const emailInput = screen.getByLabelText(/email/i);
-  //type text into three input
-  userEvent.type(firstNameInput, "abdef");
-  userEvent.type(lastNameInput, "abdef");
-  userEvent.type(emailInput, "abdef");
-  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
-  DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
-  DEBUG && console.log("emailInput.value = ", emailInput.value);
   //clear all three input
-  userEvent.clear(firstNameInput);
-  userEvent.clear(lastNameInput);
-  userEvent.clear(emailInput);
   DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
   DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
   DEBUG && console.log("emailInput.value = ", emailInput.value);
-  //get all three error p tags
 
-  //assert
-  const Promise1 = screen.findByText(/firstname must have/i);
+  //click submit
+  const submitButton = screen.getByRole("button");
+  userEvent.click(submitButton);
+
+  //assert--------------------------------------------------
+  const Promise1 = screen.findByText(/least 5 characters/i);
+  //????????????????????????????????????????????????????????
+  //? Why screen.getByText(/least 5 characters/i) fail     ?
+  //   const Promise1 = screen.getByText(/least 5 characters/i);
+  //????????????????????????????????????????????????????????
   Promise1.then((firstNameError) => {
     expect(firstNameError).toBeInTheDocument();
     expect(firstNameError).toBeTruthy();
-    DEBUG && console.log("firstNameError = ", firstNameError);
+    DEBUG &&
+      console.log("firstNameError.textContent = ", firstNameError.textContent);
   });
-  const Promise2 = screen.findByText(/lastname is a required/i);
+  //assert--------------------------------------------------
+  const Promise2 = screen.findByText(/lastname is a required field/i);
   Promise2.then((lastNameError) => {
     expect(lastNameError).toBeInTheDocument();
     expect(lastNameError).toBeTruthy();
-    DEBUG && console.log("lastNameError = ", lastNameError);
+    DEBUG &&
+      console.log("lastNameError.textContent = ", lastNameError.textContent);
   });
+  //assert--------------------------------------------------
   const Promise3 = screen.findByText(/valid email address/i);
   Promise3.then((emailError) => {
     expect(emailError).toBeInTheDocument();
@@ -117,7 +119,6 @@ test("renders ONE error message if user enters a valid first name and last name 
   DEBUG && console.log(form);
 
   //click submit
-  //   const submitButton = screen.findByDisplayValue(/submit/i);
   const submitButton = screen.getByRole("button");
   userEvent.click(submitButton);
 
@@ -152,7 +153,34 @@ test('renders "email must be a valid email address" if an invalid email is enter
   });
 });
 
-test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {});
+test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {
+  const DEBUG = false;
+  //arrange
+  render(<ContactForm />);
+  //act
+  const form = screen.getByText(/contact form/i);
+  //grap three inputs
+  const firstNameInput = screen.getByLabelText(/first name/i);
+  const emailInput = screen.getByLabelText(/email/i);
+  //type text into three input
+  userEvent.type(firstNameInput, "tommya");
+  userEvent.type(emailInput, "scrab@yahoo.com");
+  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+
+  //click submit
+  const submitButton = screen.getByRole("button");
+  userEvent.click(submitButton);
+
+  //assert
+
+  const Promise2 = screen.findByText(/lastname is a required field/i);
+  Promise2.then((lastNameError) => {
+    expect(lastNameError).toBeInTheDocument();
+    expect(lastNameError).toBeTruthy();
+    DEBUG && console.log("lastNameError = ", lastNameError.textContent);
+  });
+});
 
 test("renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.", async () => {});
 
