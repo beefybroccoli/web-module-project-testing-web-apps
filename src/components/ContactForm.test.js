@@ -182,6 +182,97 @@ test('renders "lastName is a required field" if an last name is not entered and 
   });
 });
 
-test("renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.", async () => {});
+test("renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.", async () => {
+  //???????????????????????
+  //   const DEBUG = true;
+  const DEBUG = false;
+  //????????????????????????
 
-test("renders all fields text when all fields are submitted.", async () => {});
+  //arrange
+  render(<ContactForm />);
+  //act
+  const form = screen.getByText(/contact form/i);
+  //grap three inputs
+  const firstNameInput = screen.getByLabelText(/first name/i);
+  const lastNameInput = screen.getByLabelText(/last name/i);
+  const emailInput = screen.getByLabelText(/email/i);
+  //type input into all three inputs
+  userEvent.type(firstNameInput, "Tommyam");
+  userEvent.type(lastNameInput, "Hanktoy");
+  userEvent.type(emailInput, "tomHankd@aol.com");
+  //clear all three input
+  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
+  DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+
+  //click submit
+  const submitButton = screen.getByRole("button");
+  userEvent.click(submitButton);
+
+  //assert--------------------------------------------------
+  const Promise1 = screen.findByTestId(/firstnamedisplay/i);
+  Promise1.then((firstnameDisplay) => {
+    expect(firstnameDisplay).toBeInTheDocument();
+    expect(firstnameDisplay).toBeTruthy();
+    DEBUG &&
+      console.log(
+        "firstnameDisplay.textContent = ",
+        firstnameDisplay.textContent
+      );
+  });
+  //assert--------------------------------------------------
+  const Promise2 = screen.findByTestId(/lastnamedisplay/i);
+  Promise2.then((lastnameDisplay) => {
+    expect(lastnameDisplay).toBeInTheDocument();
+    expect(lastnameDisplay).toBeTruthy();
+    DEBUG &&
+      console.log(
+        "lastnameDisplay.textContent = ",
+        lastnameDisplay.textContent
+      );
+  });
+  //assert--------------------------------------------------
+  const Promise3 = screen.findByTestId(/emaildisplay/i);
+  Promise3.then((emailDisplay) => {
+    expect(emailDisplay).toBeInTheDocument();
+    expect(emailDisplay).toBeTruthy();
+    DEBUG && console.log("emailDisplay = ", emailDisplay.textContent);
+  });
+});
+
+test("renders all fields text when all fields are submitted.", async () => {
+  //???????????????????????
+  const DEBUG = true;
+  //   const DEBUG = false;
+  //????????????????????????
+
+  //arrange
+  render(<ContactForm />);
+  //act
+  const form = screen.getByText(/contact form/i);
+  //grap three inputs
+  const firstNameInput = screen.getByLabelText(/first name/i);
+  const lastNameInput = screen.getByLabelText(/last name/i);
+  const emailInput = screen.getByLabelText(/email/i);
+  //type input into all three inputs
+  userEvent.type(firstNameInput, "Tommyam");
+  userEvent.type(lastNameInput, "Hanktoy");
+  userEvent.type(emailInput, "tomHankd@aol.com");
+
+  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
+  DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+
+  //   const promise = () => {
+  //     //click submit
+  //     const submitButton = screen.getByRole("button");
+  //     userEvent.click(submitButton);
+  //     return null;
+  //   };
+
+  //   promise.then(() => {
+  //     console.log("firstNameInput.value = ", firstNameInput.value);
+  //     console.log("lastNameInput.value = ", lastNameInput.value);
+  //     console.log("emailInput.value = ", emailInput.value);
+  //   });
+});
