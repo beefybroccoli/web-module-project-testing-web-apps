@@ -8,18 +8,94 @@ test("renders without errors", () => {
   //arrange
   render(<ContactForm />);
   //act
-  const form = screen.getAllByText(/contact form/i);
+  const form = screen.getByText(/contact form/i);
   //assert
   //?????? - why below line fail - ?????????????????????
   //console.log(form.textContent());
   expect(form).toBeTruthy();
+  expect(form).toBeInTheDocument();
 });
 
-test("renders the contact form header", () => {});
+test("renders the contact form header", () => {
+  //arrange
+  render(<ContactForm />);
+  //act
+  const h1 = screen.getByText(/contact form/i);
+  //assert
+  expect(h1).toBeTruthy();
+  expect(h1).toBeInTheDocument();
+  expect(h1).toBeVisible();
+  expect(h1).toHaveTextContent("Contact Form");
+});
 
-test("renders ONE error message if user enters less then 5 characters into firstname.", async () => {});
+test("renders ONE error message if user enters less then 5 characters into firstname.", async () => {
+  //arrange
+  render(<ContactForm />);
+  //act
+  const firstNameInput = screen.getByLabelText(/first name/i);
+  userEvent.type(firstNameInput, "abcd");
+  const firstNameError = screen.getByTestId("error");
+  //assert
+  expect(firstNameError).toBeTruthy();
+  expect(firstNameError).toHaveTextContent(/error/i);
 
-test("renders THREE error messages if user enters no values into any fields.", async () => {});
+  //????????????????????????????????????????????????????????
+  //Make sure to use async / await and the correct screen     method to account for state change.
+  //????????????????????????????????????????????????????????
+});
+
+test("renders THREE error messages if user enters no values into any fields.", async () => {
+  //???????????????????????
+  const DEBUG = false;
+  //????????????????????????
+
+  //????????????????????????????????????????????????????????????
+  // ???           What is wrong with the promise ??????????????
+  //????????????????????????????????????????????????????????????
+  //arrange
+  render(<ContactForm />);
+  //act
+  const form = screen.getByText(/contact form/i);
+  //grap three inputs
+  const firstNameInput = screen.getByLabelText(/first name/i);
+  const lastNameInput = screen.getByLabelText(/last name/i);
+  const emailInput = screen.getByLabelText(/email/i);
+  //type text into three input
+  userEvent.type(firstNameInput, "abdef");
+  userEvent.type(lastNameInput, "abdef");
+  userEvent.type(emailInput, "abdef");
+  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
+  DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+  //clear all three input
+  userEvent.clear(firstNameInput);
+  userEvent.clear(lastNameInput);
+  userEvent.clear(emailInput);
+  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
+  DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+  //get all three error p tags
+
+  //assert
+  const Promise1 = screen.findByText(/firstname must have/i);
+  Promise1.then((firstNameError) => {
+    expect(firstNameError).toBeInTheDocument();
+    expect(firstNameError).toBeTruthy();
+    DEBUG && console.log("firstNameError = ", firstNameError);
+  });
+  const Promise2 = screen.findByText(/lastname is a required/i);
+  Promise2.then((lastNameError) => {
+    expect(lastNameError).toBeInTheDocument();
+    expect(lastNameError).toBeTruthy();
+    DEBUG && console.log("lastNameError = ", lastNameError);
+  });
+  const Promise3 = screen.findByText(/valid email address/i);
+  Promise3.then((emailError) => {
+    expect(emailError).toBeInTheDocument();
+    expect(emailError).toBeTruthy();
+    DEBUG && console.log("emailError = ", emailError.textContent);
+  });
+});
 
 test("renders ONE error message if user enters a valid first name and last name but no email.", async () => {});
 
