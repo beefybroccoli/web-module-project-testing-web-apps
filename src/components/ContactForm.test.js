@@ -97,9 +97,60 @@ test("renders THREE error messages if user enters no values into any fields.", a
   });
 });
 
-test("renders ONE error message if user enters a valid first name and last name but no email.", async () => {});
+test("renders ONE error message if user enters a valid first name and last name but no email.", async () => {
+  const DEBUG = false;
+  //arrange
+  render(<ContactForm />);
+  //act
+  const form = screen.getByText(/contact form/i);
+  //grap three inputs
+  const firstNameInput = screen.getByLabelText(/first name/i);
+  const lastNameInput = screen.getByLabelText(/last name/i);
+  const emailInput = screen.getByLabelText(/email/i);
+  //type text into three input
+  userEvent.type(firstNameInput, "jasony");
+  userEvent.type(lastNameInput, "hank");
+  userEvent.type(emailInput, "");
+  DEBUG && console.log("firstNameInput.value = ", firstNameInput.value);
+  DEBUG && console.log("lastNameInput.value = ", lastNameInput.value);
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+  DEBUG && console.log(form);
 
-test('renders "email must be a valid email address" if an invalid email is entered', async () => {});
+  //click submit
+  //   const submitButton = screen.findByDisplayValue(/submit/i);
+  const submitButton = screen.getByRole("button");
+  userEvent.click(submitButton);
+
+  //assert
+  const Promise3 = screen.findByText(/valid email address/i);
+  Promise3.then((emailError) => {
+    expect(emailError).toBeInTheDocument();
+    expect(emailError).toBeTruthy();
+    DEBUG && console.log("emailError = ", emailError.textContent);
+  });
+});
+
+test('renders "email must be a valid email address" if an invalid email is entered', async () => {
+  const DEBUG = false;
+  //arrange
+  render(<ContactForm />);
+  //act
+  const form = screen.getByText(/contact form/i);
+  //grap the email inputs
+  const emailInput = screen.getByLabelText(/email/i);
+  //type text into three input
+  userEvent.type(emailInput, "223432432432");
+  DEBUG && console.log("emailInput.value = ", emailInput.value);
+  //   DEBUG && console.log(form);
+
+  //assert
+  const Promise3 = screen.findByText(/valid email address/i);
+  Promise3.then((emailError) => {
+    expect(emailError).toBeInTheDocument();
+    expect(emailError).toBeTruthy();
+    DEBUG && console.log("emailError = ", emailError.textContent);
+  });
+});
 
 test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {});
 
